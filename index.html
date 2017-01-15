@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>What is my IP?</title>
+  </head>
+  <body>
+    <h1 style="font-family: monospace; text-align: center; font-size: 10em;" id="ip">Finding IP ...</h1>
+    <script>
+      var RTCPeerConnection = window.RTCPeerConnection || webkitRTCPeerConnection || mozRTCPeerConnection;
+      var peerConn = new RTCPeerConnection({'iceServers': [{'urls': ['stun:stun.l.google.com:19302']}]});
+      var dataChannel = peerConn.createDataChannel('test');  // Needs something added for some reason
+      peerConn.createOffer({}).then((desc) => peerConn.setLocalDescription(desc));
+      peerConn.onicecandidate = (e) => {
+        if (e.candidate == null) {
+          document.getElementById("ip").innerText = /c=IN IP4 ([^\n]*)\n/.exec(peerConn.localDescription.sdp)[1];
+        }
+      };
+    </script>
+  </body>
+</html>
